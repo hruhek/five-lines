@@ -37,10 +37,10 @@ class Air implements Tile {
   isStone(): boolean {return false;}
   draw(g: CanvasRenderingContext2D, x: number, y: number) {}
   moveHorizontal(dx: number) {
-    moveToTile(playerx + dx, playery);
+    moveToTile(playerX + dx, playerY);
   }
   moveVertical(dy: number) {
-    moveToTile(playerx, playery + dy);
+    moveToTile(playerX, playerY + dy);
   }
 }
 
@@ -57,9 +57,9 @@ class Box implements Tile {
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(dx: number) {
-    if (map[playery][playerx + dx + dx].isAir() && !map[playery + 1][playerx + dx].isAir()) {
-      map[playery][playerx + dx + dx] = this;
-      moveToTile(playerx + dx, playery);
+    if (map[playerY][playerX + dx + dx].isAir() && !map[playerY + 1][playerX + dx].isAir()) {
+      map[playerY][playerX + dx + dx] = this;
+      moveToTile(playerX + dx, playerY);
     }
   }
   moveVertical(dy: number) {}
@@ -110,10 +110,10 @@ class Flux implements Tile {
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(dx: number) {
-      moveToTile(playerx + dx, playery);
+      moveToTile(playerX + dx, playerY);
   }
   moveVertical(dy: number) {
-    moveToTile(playerx, playery + dy);
+    moveToTile(playerX, playerY + dy);
   }
 }
 
@@ -131,11 +131,11 @@ class Key1 implements Tile {
   }
   moveHorizontal(dx: number) {
     removeLock1();
-    moveToTile(playerx + dx, playery);
+    moveToTile(playerX + dx, playerY);
   }
   moveVertical(dy: number) {
     removeLock1();
-    moveToTile(playerx, playery + dy);
+    moveToTile(playerX, playerY + dy);
   }
 }
 
@@ -153,11 +153,11 @@ class Key2 implements Tile {
   }
   moveHorizontal(dx: number) {
     removeLock2();
-    moveToTile(playerx + dx, playery);
+    moveToTile(playerX + dx, playerY);
   }
   moveVertical(dy: number) {
     removeLock2();
-    moveToTile(playerx, playery + dy);
+    moveToTile(playerX, playerY + dy);
   }
 }
 
@@ -219,9 +219,9 @@ class Stone implements Tile {
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(dx: number) {
-    if (map[playery][playerx + dx + dx].isAir() && !map[playery + 1][playerx + dx].isAir()) {
-      map[playery][playerx + dx + dx] = map[playery][playerx + dx];
-      moveToTile(playerx + dx, playery);
+    if (map[playerY][playerX + dx + dx].isAir() && !map[playerY + 1][playerX + dx].isAir()) {
+      map[playerY][playerX + dx + dx] = map[playerY][playerX + dx];
+      moveToTile(playerX + dx, playerY);
     }
   }
   moveVertical(dy: number) {}
@@ -248,23 +248,23 @@ interface Input {
 }
 
 class Right implements Input {
-  handle() { map[playery][playerx + 1].moveHorizontal(1) }
+  handle() { map[playerY][playerX + 1].moveHorizontal(1) }
 }
 
 class Left implements Input {
-  handle() { map[playery][playerx - 1].moveHorizontal(-1) }
+  handle() { map[playerY][playerX - 1].moveHorizontal(-1) }
 }
 
 class Up implements Input {
-  handle() { map[playery - 1][playerx].moveVertical(-1) }
+  handle() { map[playerY - 1][playerX].moveVertical(-1) }
 }
 
 class Down implements Input {
-  handle() { map[playery + 1][playerx].moveVertical(1) }
+  handle() { map[playerY + 1][playerX].moveVertical(1) }
 }
 
-let playerx = 1;
-let playery = 1;
+let playerX = 1;
+let playerY = 1;
 let rawMap: RawTile[][] = [
   [2, 2, 2, 2, 2, 2, 2, 2],
   [2, 3, 0, 1, 1, 2, 0, 2],
@@ -330,11 +330,11 @@ function removeLock2() {
   }
 }
 
-function moveToTile(newx: number, newy: number) {
-  map[playery][playerx] = new Air();
-  map[newy][newx] =  new Player();
-  playerx = newx;
-  playery = newy;
+function moveToTile(newX: number, newY: number) {
+  map[playerY][playerX] = new Air();
+  map[newY][newX] =  new Player();
+  playerX = newX;
+  playerY = newY;
 }
 
 function update() {
@@ -394,7 +394,7 @@ function drawMap(g: CanvasRenderingContext2D) {
 
 function drawPlayer(g: CanvasRenderingContext2D) {
   g.fillStyle = "#ff0000";
-  g.fillRect(playerx * TILE_SIZE, playery * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+  g.fillRect(playerX * TILE_SIZE, playerY * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 }
 
 
