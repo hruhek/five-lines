@@ -24,15 +24,14 @@ class BlogPost {
     return this.id;
   }
 
-  getAuthor() {
-    return this.author;
+  getAuthorName() {
+    return this.author.getUsername();
   }
 }
 
 function generatePostLink(website: Website, post: BlogPost) {
   let url = website.getUrl();
-  let user = post.getAuthor();
-  let name = user.getUsername();
+  let name = post.getAuthorName();
   let postId = post.getId();
   return url + name + postId;
 }
