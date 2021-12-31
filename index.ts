@@ -112,16 +112,16 @@ class Flux implements Tile {
 }
 
 class Key implements Tile {
-  constructor(private color: string, private removeStrategy: RemoveStrategy) {}
+  constructor(private keyConf: KeyConfiguration) {}
   isAir(): boolean {return false}
   isLock1(): boolean {return false;}
   isLock2(): boolean {return false;}
   draw(g: CanvasRenderingContext2D, x: number, y: number) {
-    g.fillStyle = this.color;
+    g.fillStyle = this.keyConf.getColor();
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(dx: number) {
-    remove(this.removeStrategy);
+    remove(this.keyConf.getRemoveStrategy());
     moveToTile(playerX + dx, playerY);
   }
   moveVertical(dy: number) {
@@ -131,12 +131,12 @@ class Key implements Tile {
 }
 
 class Lock implements Tile {
-  constructor(private color: string, private lock1: boolean) {}
+  constructor(private keyConf: KeyConfiguration) {}
   isAir(): boolean {return false}
-  isLock1(): boolean {return this.lock1;}
-  isLock2(): boolean {return !this.lock1;}
+  isLock1(): boolean {return this.keyConf.is1();}
+  isLock2(): boolean {return !this.keyConf.is1();}
   draw(g: CanvasRenderingContext2D, x: number, y: number) {
-    g.fillStyle = this.color;
+    g.fillStyle = this.keyConf.getColor();
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(dx: number) {}
@@ -188,26 +188,6 @@ class Unbreakable implements Tile {
   update(x: number, y: number) {}
 }
 
-interface Input {
-  handle(): void;
-}
-
-class Right implements Input {
-  handle() { map[playerY][playerX + 1].moveHorizontal(1) }
-}
-
-class Left implements Input {
-  handle() { map[playerY][playerX - 1].moveHorizontal(-1) }
-}
-
-class Up implements Input {
-  handle() { map[playerY - 1][playerX].moveVertical(-1) }
-}
-
-class Down implements Input {
-  handle() { map[playerY + 1][playerX].moveVertical(1) }
-}
-
 let playerX = 1;
 let playerY = 1;
 let rawMap: RawTile[][] = [
@@ -235,10 +215,10 @@ function transformTile(tile: RawTile) {
     case RawTile.BOX: return new Box(new Resting());
     case RawTile.FALLING_BOX: return new Box(new Falling());
     case RawTile.FLUX: return new Flux();
-    case RawTile.KEY1: return new Key("#ffcc00", new RemoveLock1());
-    case RawTile.KEY2: return new Key("#00ccff", new RemoveLock2());
-    case RawTile.LOCK1: return new Lock("#ffcc00", true);
-    case RawTile.LOCK2: return new Lock("#00ccff", false);
+    case RawTile.KEY1: return new Key(YELLOW_KEY);
+    case RawTile.KEY2: return new Key(BLUE_KEY);
+    case RawTile.LOCK1: return new Lock(YELLOW_KEY);
+    case RawTile.LOCK2: return new Lock(BLUE_KEY);
     default: assertExhausted(tile);
   }
 }
@@ -252,8 +232,6 @@ function transformMap() {
     }
   }
 }
-
-let inputs: Input[] = [];
 
 function remove(shouldRemove: RemoveStrategy) {
   for (let y = 0; y < map.length; y++) {
@@ -281,12 +259,44 @@ class RemoveLock2 implements RemoveStrategy {
   }
 }
 
+class KeyConfiguration {
+  constructor(private color: string, private _1: boolean, private removeStrategy: RemoveStrategy) {}
+  getColor() { return this.color; }
+  is1() { return this._1; }
+  getRemoveStrategy() { return this.removeStrategy; }
+}
+
+const YELLOW_KEY = new KeyConfiguration('#ffcc00', true, new RemoveLock1());
+const BLUE_KEY = new KeyConfiguration("#00ccff", false, new RemoveLock2());
+
 function moveToTile(newX: number, newY: number) {
   map[playerY][playerX] = new Air();
   map[newY][newX] =  new Player();
   playerX = newX;
   playerY = newY;
 }
+
+interface Input {
+  handle(): void;
+}
+
+class Right implements Input {
+  handle() { map[playerY][playerX + 1].moveHorizontal(1) }
+}
+
+class Left implements Input {
+  handle() { map[playerY][playerX - 1].moveHorizontal(-1) }
+}
+
+class Up implements Input {
+  handle() { map[playerY - 1][playerX].moveVertical(-1) }
+}
+
+class Down implements Input {
+  handle() { map[playerY + 1][playerX].moveVertical(1) }
+}
+
+let inputs: Input[] = [];
 
 function update() {
   handleInputs();
