@@ -1,36 +1,5 @@
-class ArrayMinimum {
-  private processor: MinimumProcessor;
-
-  constructor(accumulator: number) {
-    this.processor = new MinimumProcessor(accumulator);
-  }
-
-  process(arr: number[]) {
-    for (let i = 0; i < arr.length; i++)
-      this.processor.processElement(arr[i])
-    return this.processor.getAccumulator();
-  }
-}
-
-class MinimumProcessor {
-  constructor(private accumulator: number) {
-  }
-
-  processElement(e: number) {
-    if (this.accumulator > e)
-      this.accumulator = e;
-  }
-
-  getAccumulator(): number {
-    return this.accumulator;
-  }
-}
-
-class ArraySum {
-  private processor: SumProcessor;
-
-  constructor(accumulator: number) {
-    this.processor = new SumProcessor(accumulator);
+class BatchProcessor {
+  constructor(private processor: ElementProcessor) {
   }
 
   process(arr: number[]) {
@@ -40,7 +9,13 @@ class ArraySum {
   }
 }
 
-class SumProcessor {
+interface ElementProcessor {
+  processElement(e: number): void;
+
+  getAccumulator(): number;
+}
+
+class MinimalProcessor implements ElementProcessor {
   constructor(private accumulator: number) {
   }
 
@@ -52,4 +27,18 @@ class SumProcessor {
     return this.accumulator;
   }
 
+}
+
+class MinimumProcessor implements ElementProcessor{
+  constructor(private accumulator: number) {
+  }
+
+  processElement(e: number) {
+    if (this.accumulator > e)
+      this.accumulator = e;
+  }
+
+  getAccumulator(): number {
+    return this.accumulator;
+  }
 }
