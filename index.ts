@@ -36,7 +36,6 @@ class Resting implements FallingState {
 
 class FallStrategy {
   constructor(private falling: FallingState) {}
-  getFalling() { return this.falling; }
   update(tile: Tile, x: number, y: number) {
     this.falling = map[y + 1][x].isAir()? new Falling(): new Resting();
     this.drop(tile, x, y);
@@ -46,6 +45,9 @@ class FallStrategy {
       map[y + 1][x] = tile;
       map[y][x] = new Air();
     }
+  }
+  moveHorizontal(tile: Tile, dx: number) {
+    this.falling.moveHorizontal(tile, dx);
   }
 }
 
@@ -86,7 +88,7 @@ class Box implements Tile {
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(dx: number) {
-    this.fallStrategy.getFalling().moveHorizontal(this, dx)
+    this.fallStrategy.moveHorizontal(this, dx)
   }
   moveVertical(dy: number) {}
   update(x: number, y: number) {
@@ -167,7 +169,7 @@ class Stone implements Tile {
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(dx: number) {
-    this.fallStrategy.getFalling().moveHorizontal(this, dx)
+    this.fallStrategy.moveHorizontal(this, dx)
   }
   moveVertical(dy: number) {}
   update(x: number, y: number) {
