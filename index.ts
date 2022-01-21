@@ -218,17 +218,17 @@ class Box implements Tile {
   constructor(falling: FallingState) {
     this.fallStrategy = new FallStrategy(falling);
   }
-  isAir(): boolean {return false;}
-  isLock1(): boolean {return false;}
-  isLock2(): boolean {return false;}
+  isAir(): boolean { return false; }
+  isLock1(): boolean { return false; }
+  isLock2(): boolean { return false; }
   draw(g: CanvasRenderingContext2D, x: number, y: number) {
     g.fillStyle = "#8b4513";
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
   moveHorizontal(map: Map, player: Player, dx: number) {
-    this.fallStrategy.moveHorizontal(map, player, this, dx)
+    this.fallStrategy.moveHorizontal(map, player, this, dx);
   }
-  moveVertical(map: Map, player: Player, dy: number) {}
+  moveVertical(map: Map, player: Player, dy: number) { }
   update(map: Map, x: number, y: number) {
     this.fallStrategy.update(map, this, x, y);
   }
@@ -236,10 +236,10 @@ class Box implements Tile {
 }
 
 class Key implements Tile {
-  constructor(private keyConf: KeyConfiguration) {}
-  isAir(): boolean {return false}
-  isLock1(): boolean {return false;}
-  isLock2(): boolean {return false;}
+  constructor(private keyConf: KeyConfiguration) { }
+  isAir(): boolean { return false; }
+  isLock1(): boolean { return false; }
+  isLock2(): boolean { return false; }
   draw(g: CanvasRenderingContext2D, x: number, y: number) {
     this.keyConf.setColor(g);
     this.keyConf.fillRect(g, x, y);
@@ -258,14 +258,14 @@ class Key implements Tile {
 
 class Lock implements Tile {
   constructor(private keyConf: KeyConfiguration) { }
-  isAir(): boolean { return false }
+  isAir(): boolean { return false; }
   isLock1(): boolean { return this.keyConf.is1(); }
   isLock2(): boolean { return !this.keyConf.is1(); }
   draw(g: CanvasRenderingContext2D, x: number, y: number) {
     this.keyConf.setColor(g);
     this.keyConf.fillRect(g, x, y);
   }
-  moveHorizontal(map: Map, player: Player, dx: number) {  }
+  moveHorizontal(map: Map, player: Player, dx: number) { }
   moveVertical(map: Map, player: Player, dy: number) { }
   update(map: Map, x: number, y: number) { }
   getBlockOnTopState(): FallingState { return new Resting(); }
